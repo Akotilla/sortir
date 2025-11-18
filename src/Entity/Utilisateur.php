@@ -156,9 +156,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->actif;
     }
 
-    public function setActif(bool $actif): static
+    public function setActif(): static
     {
-        $this->actif = $actif;
+        $this->actif = true;
+        $this->roles = ['ROLE_USER'];
+        return $this;
+    }
+
+    public function setInactif(): static
+    {
+        $this->actif = false;
+        $this->roles = ['ROLE_INACTIF'];
 
         return $this;
     }
@@ -281,4 +289,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+
 }
