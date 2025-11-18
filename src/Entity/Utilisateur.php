@@ -83,6 +83,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         $this->participant = new ArrayCollection();
         $this->administrator = false;
         $this->actif = true;
+        $this->roles = ['ROLE_USER'];
     }
 
     public function getId(): ?int
