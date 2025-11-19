@@ -35,24 +35,27 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $duree = \DateTime::createFromFormat('H:i:s', sprintf('%02d:%02d:%02d', $h, $min, 00));
             $sortie->setDurée($duree);
 
-            $sortie->setNbInscriptionMax($faker->numberBetween(10, 50));
+            $nbIns = $faker->numberBetween(10, 50);
+            $sortie->setNbInscriptionMax($nbIns);
             $sortie->setInfosSortie($faker->paragraph());
 
-            $sortie->setLieu($this->getReference('lieu_'.$faker->numberBetween(0, 39), Lieu::class));
-            $sortie->setSiteOrganisateur($this->getReference('campus_'.$faker->numberBetween(0, 9), Campus::class));
-            $sortie->setOrganisePar($this->getReference('participant_'.$faker->numberBetween(0, 39), Utilisateur::class));
+            $sortie->setLieu($this->getReference('lieu_' . $faker->numberBetween(0, 39), Lieu::class));
+            $sortie->setSiteOrganisateur($this->getReference('campus_' . $faker->numberBetween(0, 9), Campus::class));
+            $sortie->setOrganisePar($this->getReference('participant_' . $faker->numberBetween(0, 39), Utilisateur::class));
 
-
-
-
-
+            $indices = range(0, 39);
+            shuffle($indices);
+            $ps = $faker->numberBetween(0, min($nbIns - 10, 40));
+            for ($j = 0; $j < $ps; $j++) {
+                $participant = $this->getReference('participant_'.$indices[$j], Utilisateur::class);
+                $sortie->addParticipant($participant);
+            }
 
 
             $manager->persist($sortie);
 
 
         }
-
 
 
         $manager->flush();

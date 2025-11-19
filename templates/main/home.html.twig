@@ -36,7 +36,7 @@
         <tbody>
         {% for sortie in sorties %}
             {% if sortie.etat.libelle != "Historisée" and
-                (sortie.etat.libelle != "En cours" or app.user == sortie.organisePar) %}
+                (sortie.etat.libelle != "En création" or user == sortie.organisePar) %}
                 <tr>
                     <td>{{ sortie.nom }}</td>
                     <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>

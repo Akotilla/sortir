@@ -16,6 +16,24 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
+    public function findByCampusWithRelations(int $campusId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.siteOrganisateur', 'c')
+            ->addSelect('c')
+            ->leftJoin('s.etat', 'e')
+            ->addSelect('e')
+            ->leftJoin('s.organisePar', 'o')
+            ->addSelect('o')
+            ->leftJoin('s.participants', 'p')
+            ->addSelect('p')
+            ->where('c.id = :campusId')
+            ->setParameter('campusId', $campusId)
+            ->orderBy('s.dateLimiteInscription', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Sortie[] Returns an array of Sortie objects
     //     */
@@ -40,4 +58,6 @@ class SortieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
 }

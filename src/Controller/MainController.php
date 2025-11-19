@@ -20,19 +20,19 @@ final class MainController extends AbstractController
         if (!$user instanceof PasswordAuthenticatedUserInterface) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
         }
-        //dd($user->getCampus()->getId());
 
-        $sorties = $sortieRepository->findBy(['siteOrganisateur'=>$user->getCampus()->getId()], ['dateLimiteInscription'=>'DESC']);
+        $campus = $campusRepository->findAll();
+        $idUser=$user->getCampus()->getId();
 
+        //$sorties = $sortieRepository->findBy(['siteOrganisateur'=>$idUser], ['dateLimiteInscription'=>'DESC']);
+        $sorties = $sortieRepository->findByCampusWithRelations($idUser);
         //dd($sorties);
 
         $parameters = ["sorties"=>$sorties];
-
-        $campus = $campusRepository->findAll();
-
         $parameters["campus"] = $campus;
+        $parameters["user"] = $user->getPseudo();
 
-       // dd($parameters);
+       //dd($parameters);
 
 
 
