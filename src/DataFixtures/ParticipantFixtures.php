@@ -23,6 +23,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
         $participant = new Utilisateur();
         $participant->setNom($faker->lastName());
         $participant->setPrenom($faker->firstName());
+        $participant->setPseudo($faker->userName());
         $participant->setTelephone($faker->phoneNumber());
         $participant->setEmail('admin@admin.com');
         $participant->setPassword($this->hasher->hashPassword($participant, '123456'));
@@ -36,6 +37,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
             $participant = new Utilisateur();
             $participant->setNom($faker->lastName());
             $participant->setPrenom($faker->firstName());
+            $participant->setPseudo($faker->userName());
             $participant->setTelephone($faker->phoneNumber());
             $participant->setEmail('user' . $i . '@gmail.com');
             $participant->setPassword($this->hasher->hashPassword($participant, '123456'));

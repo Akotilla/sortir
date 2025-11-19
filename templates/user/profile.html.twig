@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Mon Profil
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Mon Profil</h4>
+                    </div>
+
+                    <div class="card-body">
+
+                        {{ form_start(profileForm) }}
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.campus, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.pseudo, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.nom, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.telephone, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.email, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.password, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.password_confirm, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <button class="btn btn-primary w-100 mt-3">Enregistrer</button>
+
+                        {{ form_end(profileForm) }}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

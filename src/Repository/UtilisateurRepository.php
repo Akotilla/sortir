@@ -34,7 +34,6 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
     }
 
 
-
     //    /**
     //     * @return Utilisateur[] Returns an array of Utilisateur objects
     //     */
@@ -50,13 +49,13 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Utilisateur
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+//        public function findOneBySomeField($value): ?Utilisateur
+//        {
+//            return $this->createQueryBuilder('u')
+//                ->andWhere('u.exampleField = :val')
+//                ->setParameter('val', $value)
+//                ->getQuery()
+//                ->getOneOrNullResult()
+//            ;
+//        }
 }
