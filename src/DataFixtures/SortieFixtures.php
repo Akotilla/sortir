@@ -18,7 +18,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         $faker = \Faker\Factory::create('fr_FR');
         $arrayEtat = $manager->getRepository(Etat::class)->findAll();
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             $sortie = new Sortie();
             $sortie->setNom($faker->word);
 

@@ -1,10 +1,82 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-
-{% endblock %}
-
 {% block title %}
+    Accueil
+{% endblock %}
+
+
+{% block body %}
+    <div>
+        <h3>Filtrer les sorties</h3>
+        <label for="campus">Campus</label>
+        <select name="campus" id="campus">
+            <option value="" disabled selected>-- Sélectionnez un campus --</option>
+            {% for campus in campus %}
+                <option value="{{ campus.id }}">{{ campus.nom }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-lg btn-primary" type="submit">
+            Rechercher
+        </button>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nom de la sortie</th>
+            <th>Date de la sortie</th>
+            <th>Clôture</th>
+            <th>Inscrits/Places</th>
+            <th>Etat</th>
+            <th>Inscrit</th>
+            <th>Organisateur</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sortie in sorties %}
+            {% if sortie.etat.libelle != "Historisée" and
+                (sortie.etat.libelle != "En cours" or app.user == sortie.organisePar) %}
+                <tr>
+                    <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                    <td>{{ sortie.dateLimiteInscription|date('d/m/Y H:i') }}</td>
+                    <td>{{ sortie.participants|length }}/{{ sortie.nbInscriptionMax }}</td>
+                    <td>{{ sortie.etat.libelle }}</td>
+                    <td>
+                        {% if app.user in sortie.participants.toArray %}
+                            Oui
+                        {% else %}
+                            Non
+                        {% endif %}
+                    </td>
+                    <td>
+                        {#                    <a href="{{ path('app_profil', {'id': sortie.organisePar.id}) }}"> #}
+                        {{ sortie.organisePar.pseudo }}
+                        {#                    </a> #}
+                    </td>
+                    <td>
+                        {#                    <div class="btn-group" role="group"> #}
+                        {#                        <a href="{{ path('sortie_show', {'id': sortie.id}) }}" class="btn btn-outline-info btn-sm">Voir</a> #}
+                        {#                        {% if app.user == sortie.organisePar %} #}
+                        {#                            <a href="{{ path('sortie_edit', {'id': sortie.id}) }}" class="btn btn-outline-warning btn-sm">Modifier</a> #}
+                        {#                        {% endif %} #}
+                        {#                        {% if sortie.dateLimiteInscription > "now" and sortie.participants|length < sortie.nbInscriptionMax %} #}
+                        {#                            {% if app.user not in sortie.participants.toArray %} #}
+                        {#                                <a href="{{ path('sortie_register', {'id': sortie.id}) }}" class="btn btn-outline-success btn-sm">S'inscrire</a> #}
+                        {#                            {% else %} #}
+                        {#                                <a href="{{ path('sortie_unregister', {'id': sortie.id}) }}" class="btn btn-outline-danger btn-sm">Se désister</a> #}
+                        {#                            {% endif %} #}
+                        {#                        {% endif %} #}
+                        {#                    </div> #}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+
 
 {% endblock %}
+
 
