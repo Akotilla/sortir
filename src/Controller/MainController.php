@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\DTO\SortieFiltre;
 use App\Entity\Sortie;
+use App\Form\SortieType;
 use App\Repository\CampusRepository;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -13,29 +16,35 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 final class MainController extends AbstractController
 {
-    #[Route("/", name:"main_home", methods: ["GET"])]
-    public function home(SortieRepository $sortieRepository, CampusRepository $campusRepository): Response
+    #[Route("/", name: "main_home", methods: ['GET', 'POST'])]
+    public function home(
+        Request          $request,
+        SortieRepository $sortieRepository,
+    ): Response
     {
+
         $user = $this->getUser();
         if (!$user instanceof PasswordAuthenticatedUserInterface) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
         }
 
-        $campus = $campusRepository->findAll();
-        $idUser=$user->getCampus()->getId();
+        $sortieFiltre = new SortieFiltre();
+        $sortieFiltre->setSiteOrganisateur($user->getCampus());
+        $sortieForm = $this->createForm(SortieType::class, $sortieFiltre);
+        $sortieForm->handleRequest($request);
 
-        //$sorties = $sortieRepository->findBy(['siteOrganisateur'=>$idUser], ['dateLimiteInscription'=>'DESC']);
-        $sorties = $sortieRepository->findByCampusWithRelations($idUser);
-        //dd($sorties);
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            $sortieFiltre = $sortieForm->getData();
+            $sorties = $sortieRepository->findByFiltre($sortieFiltre, $user->getId());
+            dump($sorties);
+        } else {
+            $sorties = $sortieRepository->findByCampusWithRelations($user->getCampus()->getId(), $user->getId());
+        }
 
-        $parameters = ["sorties"=>$sorties];
-        $parameters["campus"] = $campus;
-        $parameters["user"] = $user->getPseudo();
-
-       //dd($parameters);
-
-
-
-        return $this->render('main/home.html.twig',$parameters);
+        dump($sorties);
+        return $this->render('main/sortie.html.twig', [
+            'sortieForm' => $sortieForm->createView(),
+            'sorties' => $sorties,
+        ]);
     }
 }

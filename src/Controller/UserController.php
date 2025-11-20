@@ -33,11 +33,7 @@ final class UserController extends AbstractController
                 $utilisateurRepository->upgradePassword($user, $hashedPassword);
             }
 
-
-
             $this->addFlash('success', 'Profil mis à jour avec succès !');
-
-
         }
         //dd($profileForm);
 
