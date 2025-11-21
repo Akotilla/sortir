@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -25,20 +26,23 @@ class Sortie
 
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Date de début obligatoire')]
-    #[Assert\DateTime()]
+    #[Assert\GreaterThanOrEqual(
+        value: 'now',
+        message: 'La date de début ne peut pas être dans le passé.'
+    )]
     private ?\DateTimeImmutable $dateHeureDebut = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     #[Assert\NotBlank(message: 'Durée obligatoire')]
-    private ?\DateTime $durée = null;
+    private ?\DateTime $duree = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Date limite d\'inscription obligatoire')]
-    #[Assert\DateTime()]
-    private ?\DateTimeImmutable $dateLimiteInscription = null;
+   private ?\DateTimeImmutable $dateLimiteInscription = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Nombre max d\'inscription obligatoire')]
+    #[Assert\Positive(message: 'Le nombre maximum d\'inscriptions doit être supérieur à 0')]
     private ?int $nbInscriptionMax = null;
 
     #[ORM\Column(length: 255)]
@@ -65,6 +69,18 @@ class Sortie
      */
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'participant')]
     private Collection $participants;
+
+    #[Assert\Callback]
+    public function validateDateLimiteInscription(ExecutionContextInterface $context): void
+    {
+        if ($this->dateLimiteInscription !== null && $this->dateHeureDebut !== null) {
+            if ($this->dateLimiteInscription < $this->dateHeureDebut) {
+                $context->buildViolation('La date limite doit être supérieure ou égale à la date de début.')
+                    ->atPath('dateLimiteInscription')
+                    ->addViolation();
+            }
+        }
+    }
 
     public function __construct()
     {
@@ -108,14 +124,14 @@ class Sortie
         return $this;
     }
 
-    public function getDurée(): ?\DateTime
+    public function getDuree(): ?\DateTime
     {
-        return $this->durée;
+        return $this->duree;
     }
 
-    public function setDurée(\DateTime $durée): static
+    public function setDuree(\DateTime $duree): static
     {
-        $this->durée = $durée;
+        $this->duree = $duree;
 
         return $this;
     }

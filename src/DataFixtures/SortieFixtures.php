@@ -33,7 +33,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $h = $faker->numberBetween($min, $max);
             $min = $faker->numberBetween(0, 59);
             $duree = \DateTime::createFromFormat('H:i:s', sprintf('%02d:%02d:%02d', $h, $min, 00));
-            $sortie->setDurée($duree);
+            $sortie->setDuree($duree);
 
             $nbIns = $faker->numberBetween(10, 50);
             $sortie->setNbInscriptionMax($nbIns);

@@ -100,7 +100,11 @@
         <tbody>
         {% for sortie in sorties %}
             <tr>
-                <td>{{ sortie.nom }}</td>
+                <td>
+                    <a href="{{ path('sortie_show', {'id': sortie.id}) }}">
+                        {{ sortie.nom }}
+                    </a>
+                </td>
                 <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
                 <td>{{ sortie.dateLimiteInscription|date('d/m/Y H:i') }}</td>
                 <td>{{ sortie.participants|length }}/{{ sortie.nbInscriptionMax }}</td>
@@ -114,7 +118,11 @@
                     {% endif %}
                 </td>
 
-                <td>{{ sortie.organisePar.pseudo }}</td>
+                <td>
+                    <a href="{{ path('user_show', {'id': sortie.organisePar.id}) }}">
+                        {{ sortie.organisePar.pseudo }}
+                    </a>
+                </td>
 
                 <td>
                     <!-- Boutons futurs  -->

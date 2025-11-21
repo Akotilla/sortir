@@ -26,6 +26,11 @@
 
 <main class="flex-grow-1 py-4">
     <div class="container">
+        {% for label, messages in app.flashes %}
+            <div class="alert alert-{{ label }}">
+                {% for message in messages %}{{ message }}{% endfor %}
+            </div>
+        {% endfor %}
         {% block body %}{% endblock %}
     </div>
 </main>
