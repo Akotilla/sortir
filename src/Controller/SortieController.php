@@ -8,6 +8,7 @@ use App\Entity\Utilisateur;
 use App\Form\CreatesortieType;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
+use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -83,11 +84,11 @@ final class SortieController extends AbstractController
 
     #[Route('/edit/{id}', name: 'sortie_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(
-        Sortie $sortie,
-        Request $request,
+        Sortie                 $sortie,
+        Request                $request,
         EntityManagerInterface $em,
-        EtatRepository $etatRepo,
-    ):Response
+        EtatRepository         $etatRepo,
+    ): Response
     {
         $user = $this->getUser();
         if (!$user instanceof Utilisateur) {
@@ -98,6 +99,7 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
         }
 
+        if($sortie->getDateLimiteInscription() > new \DateTime('now') && in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'En création'] )){
 
         $form = $this->createForm(CreatesortieType::class, $sortie);
         $form->handleRequest($request);
@@ -124,17 +126,20 @@ final class SortieController extends AbstractController
 
         return $this->render('sortie/edit.html.twig', [
             'sortieForm' => $form,
-            'sortie'     => $sortie,
-            'campus'     => $sortie->getSiteOrganisateur(),
+            'sortie' => $sortie,
+            'campus' => $sortie->getSiteOrganisateur(),
 
         ]);
+        }
+        $this->addFlash('danger', 'Cette sortie ne peut être modifiée.');
+        return $this->redirectToRoute('main_home');
     }
 
     #[Route('/publish/{id}', name: 'sortie_publish', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function publish(Sortie $sortie,
-                            EtatRepository $etatRepo,
+    public function publish(Sortie                 $sortie,
+                            EtatRepository         $etatRepo,
                             EntityManagerInterface $em,
-    ):Response
+    ): Response
     {
         $user = $this->getUser();
         if (!$user instanceof Utilisateur) {
@@ -145,12 +150,15 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
         }
 
-        $etat = $etatRepo->findByLibelle('Ouverte');
-        $sortie->setEtat($etat);
-        $em->persist($sortie);
-        $em->flush();
+        if($sortie->getDateLimiteInscription() > new \DateTime('now') && in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'En création'] )) {
+            $etat = $etatRepo->findByLibelle('Ouverte');
+            $sortie->setEtat($etat);
+            $em->persist($sortie);
+            $em->flush();
 
-        $this->addFlash('success', 'Sortie mise à jour !');
+            $this->addFlash('success', 'Sortie mise à jour !');
+        }
+        $this->addFlash('danger', 'Cette sortie ne peut être mise à jour !');
         return $this->redirectToRoute('main_home');
 
     }
@@ -175,6 +183,40 @@ final class SortieController extends AbstractController
 
         return $this->redirectToRoute('main_home');
 
+    }
+
+    #[Route('/unsub/{id}', name: 'sortie_unsub', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function unsub(Sortie                 $sortie,
+                          EntityManagerInterface $em
+    ): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Utilisateur) {
+            throw $this->createAccessDeniedException('Vous devez être connecté.');
+        }
+        $sortie->removeParticipant($user);
+        $em->flush();
+
+        $this->addFlash('success', 'Inscription supprimée.');
+
+        return $this->redirectToRoute('main_home');
+    }
+
+    #[Route('/sub/{id}', name: 'sortie_sub', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function sub(Sortie $sortie,
+                        EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Utilisateur) {
+            throw $this->createAccessDeniedException('Vous devez être connecté.');
+        }
+        $sortie->addParticipant($user);
+        $em->flush();
+
+
+        $this->addFlash('success', 'Inscription validée.');
+
+        return $this->redirectToRoute('main_home');
     }
 
     #[Route('/{id}', name: 'sortie_show', requirements: ['id' => '\d+'], methods: ['GET'])]

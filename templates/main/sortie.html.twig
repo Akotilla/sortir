@@ -123,13 +123,24 @@
                 <td>
                     <!-- Boutons futurs  -->
                     <div class="btn-group" role="group">
-                        <a href="{{ path('sortie_show', {'id': sortie.id}) }}"  class="btn btn-secondary">
+                        <a href="{{ path('sortie_show', {'id': sortie.id}) }}" class="btn btn-secondary">
                             Afficher
                         </a>
+                        {% if sortie.etat.libelle is same as("Ouverte") %}
+                        {% if app.user in sortie.participants.toArray %}
+                            <a href="{{ path('sortie_unsub', {'id': sortie.id}) }}" class="btn btn-primary">
+                                Se désinscrire
+                            </a>
+                        {% else %}
+                            <a href="{{ path('sortie_sub', {'id': sortie.id}) }}" class="btn btn-primary">
+                                S'inscrire
+                            </a>
+                        {% endif %}
+                        {% endif %}
                         {% if app.user is same as(sortie.organisePar) %}
-                        <a href="{{ path('sortie_edit', {'id': sortie.id}) }}"  class="btn btn-secondary">
-                            Modifier
-                        </a>
+                            <a href="{{ path('sortie_edit', {'id': sortie.id}) }}" class="btn btn-secondary">
+                                Modifier
+                            </a>
                             {% if sortie.etat.libelle is same as("En création") %}
                                 <form method="post"
                                       action="{{ path('sortie_publish', { id: sortie.id }) }}"
@@ -139,6 +150,7 @@
                                 </form>
                             {% endif %}
                         {% endif %}
+
 
                     </div>
                 </td>
