@@ -115,43 +115,58 @@
                 </td>
 
                 <td>
-                    <a href="{{ path('user_show', {'id': sortie.organisePar.id}) }}">
+                    <a href="{{ path('user_show', {'id': sortie.organisePar.id}) }}"
+                       class="btn btn-outline-primary w-100">
                         {{ sortie.organisePar.pseudo }}
                     </a>
                 </td>
 
                 <td>
                     <!-- Boutons futurs  -->
-                    <div class="btn-group" role="group">
-                        <a href="{{ path('sortie_show', {'id': sortie.id}) }}" class="btn btn-secondary">
+                    <div class="btn-group " role="group">
+                        <a href="{{ path('sortie_show', {'id': sortie.id}) }}" class="btn btn-outline-secondary">
                             Afficher
                         </a>
                         {% if sortie.etat.libelle is same as("Ouverte") %}
-                        {% if app.user in sortie.participants.toArray %}
-                            <a href="{{ path('sortie_unsub', {'id': sortie.id}) }}" class="btn btn-primary">
-                                Se désinscrire
-                            </a>
-                        {% else %}
-                            <a href="{{ path('sortie_sub', {'id': sortie.id}) }}" class="btn btn-primary">
-                                S'inscrire
-                            </a>
-                        {% endif %}
-                        {% endif %}
-                        {% if app.user is same as(sortie.organisePar) %}
-                            <a href="{{ path('sortie_edit', {'id': sortie.id}) }}" class="btn btn-secondary">
-                                Modifier
-                            </a>
-                            {% if sortie.etat.libelle is same as("En création") %}
-                                <form method="post"
-                                      action="{{ path('sortie_publish', { id: sortie.id }) }}"
-                                      onsubmit="return confirm('Publier cette sortie ?');">
-                                    <button class="btn btn-success" id="publish" type="submit">Publier</button>
-
-                                </form>
+                            {% if app.user in sortie.participants.toArray %}
+                                <a href="{{ path('sortie_unsub', {'id': sortie.id}) }}" class="btn btn-outline-primary">
+                                    Se désinscrire
+                                </a>
+                            {% else %}
+                                <a href="{{ path('sortie_sub', {'id': sortie.id}) }}" class="btn btn-outline-primary">
+                                    S'inscrire
+                                </a>
                             {% endif %}
                         {% endif %}
+                    </div>
+                    <div class="btn-group btn-group-toggle" role="group">
 
+                        {% if app.user is same as(sortie.organisePar) %}
+                            <form method="post"
+                                    {% if sortie.etat.libelle is same as("En création") %}
+                                  action="{{ path('sortie_publish', { id: sortie.id }) }}"
+                                  onsubmit="return confirm('Attention vous allez modifier l\'état de cette sortie !');">
+                                <div class="btn-group btn-group-toggle" role="group">
 
+                                    <a href="{{ path('sortie_edit', {'id': sortie.id}) }}"
+                                       class="btn btn-outline-primary">
+                                        Modifier
+                                    </a>
+                                    <button class="btn btn-outline-success" id="publish" type="submit">Publier</button>
+                                </div>
+
+                                {% elseif sortie.etat.libelle is same as("Ouverte") %}
+
+                                    action="{{ path('sortie_cancel', { id: sortie.id }) }}"
+                                    onsubmit="return confirm('Annuler cette sortie ?');">
+                                    <button class="btn btn-outline-danger" id="cancel" type="submit">Annuler</button>
+
+                                {% else %}
+                                    >
+                                {% endif %}
+
+                            </form>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
@@ -167,7 +182,7 @@
     </table>
 
     <a href="{{ path('sortie_create') }}"
-       class="btn btn-secondary w-100">
+       class="btn btn-outline-success w-100">
         Créer une sortie
     </a>
 

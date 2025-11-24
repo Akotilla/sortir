@@ -94,15 +94,15 @@ final class SortieController extends AbstractController
         if (!$user instanceof Utilisateur) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
         }
-
         if ($sortie->getOrganisePar() !== $user && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
         }
+        if( $sortie->getEtat()->getLibelle() === 'En création' ){
 
-        if($sortie->getDateLimiteInscription() > new \DateTime('now') && in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'En création'] )){
 
         $form = $this->createForm(CreatesortieType::class, $sortie);
         $form->handleRequest($request);
+
 
         if ($form->isSubmitted()) {
 
@@ -161,6 +161,34 @@ final class SortieController extends AbstractController
         $this->addFlash('danger', 'Cette sortie ne peut être mise à jour !');
         return $this->redirectToRoute('main_home');
 
+    }
+
+    #[Route('/cancel/{id}', name: 'sortie_cancel', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function cancel(Sortie                 $sortie,
+                            EtatRepository         $etatRepo,
+                            EntityManagerInterface $em,
+    ): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Utilisateur) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
+        }
+
+        if ($sortie->getOrganisePar() !== $user && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
+        }
+
+        if($sortie->getDateHeureDebut() > new \DateTime('now') && $sortie->getEtat()->getLibelle() === 'Ouverte' ) {
+            $etat = $etatRepo->findByLibelle('Annulée');
+            $sortie->setEtat($etat);
+            $em->persist($sortie);
+            $em->flush();
+
+            $this->addFlash('success', 'Sortie mise à jour !');
+
+        }else{$this->addFlash('danger', 'Cette sortie ne peut être mise à jour !');}
+
+        return $this->redirectToRoute('main_home');
     }
 
     #[Route('/delete/{id}', name: 'sortie_delete', requirements: ['id' => '\d+'], methods: ['POST'])]

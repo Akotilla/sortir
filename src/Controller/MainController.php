@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 
 final class MainController extends AbstractController
@@ -36,15 +37,23 @@ final class MainController extends AbstractController
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             $sortieFiltre = $sortieForm->getData();
             $sorties = $sortieRepository->findByFiltre($sortieFiltre, $user->getId());
-            dump($sorties);
         } else {
             $sorties = $sortieRepository->findByCampusWithRelations($user->getCampus()->getId(), $user->getId());
         }
-
-        dump($sorties);
         return $this->render('main/sortie.html.twig', [
             'sortieForm' => $sortieForm->createView(),
             'sorties' => $sorties,
         ]);
     }
+
+    #[Route('/test-cache')]
+    public function testCache(CacheInterface $cache)
+    {
+        $lastRun = $cache->get('daily', fn() => 'Jamais');
+
+        return $this->json([
+            'daily_cache' => $lastRun
+        ]);
+    }
+
 }
