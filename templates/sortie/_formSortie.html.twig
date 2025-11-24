@@ -1,0 +1,112 @@
+{{ form_start(sortieForm) }}
+
+        {% for label, messages in app.flashes %}
+            <div class="alert alert-{{ label }}">
+                {% for message in messages %}{{ message }}{% endfor %}
+            </div>
+        {% endfor %}
+        {{ form_errors(sortieForm) }}
+
+<div class="card shadow-sm p-4 mb-4">
+
+    <div class="row justify-content-between">
+
+        <div class="col-md-6">
+
+            <div class="mb-3">
+                {{ form_label(sortieForm.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(sortieForm.nom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(sortieForm.nom) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(sortieForm.dateHeureDebut, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(sortieForm.dateHeureDebut, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(sortieForm.dateHeureDebut) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(sortieForm.dateLimiteInscription, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(sortieForm.dateLimiteInscription, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(sortieForm.dateLimiteInscription) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(sortieForm.nbInscriptionMax, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(sortieForm.nbInscriptionMax, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(sortieForm.nbInscriptionMax) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(sortieForm.duree, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(sortieForm.duree, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(sortieForm.duree) }}
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="mb-3">
+                <label class="form-label">Campus</label>
+                <input type="text" class="form-control" value="{{ campus.nom }}" readonly disabled>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(sortieForm.lieu, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(sortieForm.lieu, {'attr': {
+                    'class': 'form-select'}}) }}
+                {{ form_errors(sortieForm.lieu) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Rue</label>
+                <input id="lieu-rue" class="form-control" readonly disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Code postal</label>
+                <input id="lieu-cp" class="form-control" readonly disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Latitude / Longitude</label>
+                <input id="lieu-coord" class="form-control" readonly disabled>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div class="mt-4">
+    {{ form_label(sortieForm.infosSortie) }}
+    {{ form_widget(sortieForm.infosSortie) }}
+    {{ form_errors(sortieForm.infosSortie) }}
+</div>
+
+<div class="mt-4 row text-center">
+
+    <div class="col-md-3 mb-2">
+        {{ form_row(sortieForm.save, {'attr': {'class': 'btn btn-primary w-100'}}) }}
+
+    </div>
+
+    <div class="col-md-3 mb-2">
+        {{ form_row(sortieForm.publish, {'attr': {'class': 'btn btn-success w-100'}}) }}
+    </div>
+
+    <div class="col-md-3 mb-2">
+        <a href="{{ path('main_home') }}"
+           class="btn btn-secondary w-100">
+            Retour
+        </a>
+    </div>
+
+
+
+
+
+
+{{ form_end(sortieForm) }}

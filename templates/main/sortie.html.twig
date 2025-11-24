@@ -100,11 +100,7 @@
         <tbody>
         {% for sortie in sorties %}
             <tr>
-                <td>
-                    <a href="{{ path('sortie_show', {'id': sortie.id}) }}">
-                        {{ sortie.nom }}
-                    </a>
-                </td>
+                <td>{{ sortie.nom }}</td>
                 <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
                 <td>{{ sortie.dateLimiteInscription|date('d/m/Y H:i') }}</td>
                 <td>{{ sortie.participants|length }}/{{ sortie.nbInscriptionMax }}</td>
@@ -126,6 +122,25 @@
 
                 <td>
                     <!-- Boutons futurs  -->
+                    <div class="btn-group" role="group">
+                        <a href="{{ path('sortie_show', {'id': sortie.id}) }}"  class="btn btn-secondary">
+                            Afficher
+                        </a>
+                        {% if app.user is same as(sortie.organisePar) %}
+                        <a href="{{ path('sortie_edit', {'id': sortie.id}) }}"  class="btn btn-secondary">
+                            Modifier
+                        </a>
+                            {% if sortie.etat.libelle is same as("En création") %}
+                                <form method="post"
+                                      action="{{ path('sortie_publish', { id: sortie.id }) }}"
+                                      onsubmit="return confirm('Publier cette sortie ?');">
+                                    <button class="btn btn-success" id="publish" type="submit">Publier</button>
+
+                                </form>
+                            {% endif %}
+                        {% endif %}
+
+                    </div>
                 </td>
             </tr>
         {% else %}
@@ -138,5 +153,10 @@
         </tbody>
 
     </table>
+
+    <a href="{{ path('sortie_create') }}"
+       class="btn btn-secondary w-100">
+        Créer une sortie
+    </a>
 
 {% endblock %}

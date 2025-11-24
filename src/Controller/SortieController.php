@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Sortie;
+use App\Entity\Utilisateur;
 use App\Form\CreatesortieType;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
@@ -79,21 +81,103 @@ final class SortieController extends AbstractController
         ]);
     }
 
-    #[
-        Route('/edit', name: 'sortie_edit', methods: ['GET', 'POST'])]
-    public function edit(Sortie $sortie)
+    #[Route('/edit/{id}', name: 'sortie_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function edit(
+        Sortie $sortie,
+        Request $request,
+        EntityManagerInterface $em,
+        EtatRepository $etatRepo,
+    ):Response
     {
-// todo: vérifier rôle usercréateur ou admin
+        $user = $this->getUser();
+        if (!$user instanceof Utilisateur) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
+        }
+
+        if ($sortie->getOrganisePar() !== $user && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
+        }
+
+
+        $form = $this->createForm(CreatesortieType::class, $sortie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+
+            if ($form->get('publish')->isClicked()) {
+                $etat = $etatRepo->findByLibelle('Ouverte');
+            } else {
+                $etat = $etatRepo->findByLibelle('En création');
+            }
+
+            $sortie->setEtat($etat);
+
+            if ($form->isValid()) {
+                $em->flush();
+
+                $this->addFlash('success', 'Sortie mise à jour !');
+                return $this->redirectToRoute('main_home');
+            } else {
+                $this->addFlash('danger', 'Erreurs dans le formulaire.');
+            }
+        }
+
+        return $this->render('sortie/edit.html.twig', [
+            'sortieForm' => $form,
+            'sortie'     => $sortie,
+            'campus'     => $sortie->getSiteOrganisateur(),
+
+        ]);
     }
 
-    #[Route('/inscription', name: 'sortie_inscription', methods: ['GET', 'POST'])]
-    public function inscription()
+    #[Route('/publish/{id}', name: 'sortie_publish', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function publish(Sortie $sortie,
+                            EtatRepository $etatRepo,
+                            EntityManagerInterface $em,
+    ):Response
     {
-        // todo vérfier conecter et role actif
+        $user = $this->getUser();
+        if (!$user instanceof Utilisateur) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
+        }
+
+        if ($sortie->getOrganisePar() !== $user && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
+        }
+
+        $etat = $etatRepo->findByLibelle('Ouverte');
+        $sortie->setEtat($etat);
+        $em->persist($sortie);
+        $em->flush();
+
+        $this->addFlash('success', 'Sortie mise à jour !');
+        return $this->redirectToRoute('main_home');
 
     }
 
-    #[Route('/{id}', name: 'sortie_show', methods: ['GET'])]
+    #[Route('/delete/{id}', name: 'sortie_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete(Sortie $sortie, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof Utilisateur) {
+            throw $this->createAccessDeniedException('Vous devez être connecté.');
+        }
+
+        if ($sortie->getOrganisePar() !== $user && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous n’avez pas les droits pour supprimer cette sortie.');
+        }
+
+        $em->remove($sortie);
+        $em->flush();
+
+        $this->addFlash('success', 'Sortie supprimée.');
+
+        return $this->redirectToRoute('main_home');
+
+    }
+
+    #[Route('/{id}', name: 'sortie_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(Sortie $sortie): Response
     {
         return $this->render('sortie/show.html.twig', [
