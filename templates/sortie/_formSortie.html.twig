@@ -37,10 +37,16 @@
                 {{ form_errors(sortieForm.nbInscriptionMax) }}
             </div>
 
-            <div class="mb-3">
-                {{ form_label(sortieForm.duree, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(sortieForm.duree, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(sortieForm.duree) }}
+            <div class="mb-3 row">
+                <label class="form-label">Durée: (hh/min)</label>
+                <div class="col-md-6">
+                    {{ form_widget(sortieForm.dureeHeures, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(sortieForm.dureeHeures) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_widget(sortieForm.dureeMinutes, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(sortieForm.dureeMinutes) }}
+                </div>
             </div>
 
         </div>
@@ -86,7 +92,7 @@
     {{ form_errors(sortieForm.infosSortie) }}
 </div>
 
-<div class="mt-4 row text-center">
+<div class="mt-4 row text-center btn-group" role="group">
 
     <div class="col-md-3 mb-2">
         {{ form_row(sortieForm.save, {'attr': {'class': 'btn btn-primary w-100'}}) }}
@@ -103,10 +109,7 @@
             Retour
         </a>
     </div>
-
-
-
-
+</div>
 
 
 {{ form_end(sortieForm) }}

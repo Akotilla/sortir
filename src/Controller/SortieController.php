@@ -97,39 +97,39 @@ final class SortieController extends AbstractController
         if ($sortie->getOrganisePar() !== $user && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
         }
-        if( $sortie->getEtat()->getLibelle() === 'En création' ){
+        if ($sortie->getEtat()->getLibelle() === 'En création') {
 
 
-        $form = $this->createForm(CreatesortieType::class, $sortie);
-        $form->handleRequest($request);
+            $form = $this->createForm(CreatesortieType::class, $sortie);
+            $form->handleRequest($request);
 
 
-        if ($form->isSubmitted()) {
+            if ($form->isSubmitted()) {
 
-            if ($form->get('publish')->isClicked()) {
-                $etat = $etatRepo->findByLibelle('Ouverte');
-            } else {
-                $etat = $etatRepo->findByLibelle('En création');
+                if ($form->get('publish')->isClicked()) {
+                    $etat = $etatRepo->findByLibelle('Ouverte');
+                } else {
+                    $etat = $etatRepo->findByLibelle('En création');
+                }
+
+                $sortie->setEtat($etat);
+
+                if ($form->isValid()) {
+                    $em->flush();
+
+                    $this->addFlash('success', 'Sortie mise à jour !');
+                    return $this->redirectToRoute('main_home');
+                } else {
+                    $this->addFlash('danger', 'Erreurs dans le formulaire.');
+                }
             }
 
-            $sortie->setEtat($etat);
+            return $this->render('sortie/edit.html.twig', [
+                'sortieForm' => $form,
+                'sortie' => $sortie,
+                'campus' => $sortie->getSiteOrganisateur(),
 
-            if ($form->isValid()) {
-                $em->flush();
-
-                $this->addFlash('success', 'Sortie mise à jour !');
-                return $this->redirectToRoute('main_home');
-            } else {
-                $this->addFlash('danger', 'Erreurs dans le formulaire.');
-            }
-        }
-
-        return $this->render('sortie/edit.html.twig', [
-            'sortieForm' => $form,
-            'sortie' => $sortie,
-            'campus' => $sortie->getSiteOrganisateur(),
-
-        ]);
+            ]);
         }
         $this->addFlash('danger', 'Cette sortie ne peut être modifiée.');
         return $this->redirectToRoute('main_home');
@@ -150,23 +150,25 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
         }
 
-        if($sortie->getDateLimiteInscription() > new \DateTime('now') && in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'En création'] )) {
+        if ($sortie->getDateLimiteInscription() > new \DateTime('now') && in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'En création'])) {
             $etat = $etatRepo->findByLibelle('Ouverte');
             $sortie->setEtat($etat);
             $em->persist($sortie);
             $em->flush();
 
             $this->addFlash('success', 'Sortie mise à jour !');
+        } else {
+            $this->addFlash('danger', 'Cette sortie ne peut être mise à jour !');
         }
-        $this->addFlash('danger', 'Cette sortie ne peut être mise à jour !');
+
         return $this->redirectToRoute('main_home');
 
     }
 
     #[Route('/cancel/{id}', name: 'sortie_cancel', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function cancel(Sortie                 $sortie,
-                            EtatRepository         $etatRepo,
-                            EntityManagerInterface $em,
+                           EtatRepository         $etatRepo,
+                           EntityManagerInterface $em,
     ): Response
     {
         $user = $this->getUser();
@@ -178,7 +180,7 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
         }
 
-        if($sortie->getDateHeureDebut() > new \DateTime('now') && $sortie->getEtat()->getLibelle() === 'Ouverte' ) {
+        if ($sortie->getDateHeureDebut() > new \DateTime('now') && $sortie->getEtat()->getLibelle() === 'Ouverte') {
             $etat = $etatRepo->findByLibelle('Annulée');
             $sortie->setEtat($etat);
             $em->persist($sortie);
@@ -186,7 +188,9 @@ final class SortieController extends AbstractController
 
             $this->addFlash('success', 'Sortie mise à jour !');
 
-        }else{$this->addFlash('danger', 'Cette sortie ne peut être mise à jour !');}
+        } else {
+            $this->addFlash('danger', 'Cette sortie ne peut être mise à jour !');
+        }
 
         return $this->redirectToRoute('main_home');
     }
@@ -231,7 +235,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/sub/{id}', name: 'sortie_sub', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function sub(Sortie $sortie,
+    public function sub(Sortie                 $sortie,
                         EntityManagerInterface $em): Response
     {
         $user = $this->getUser();

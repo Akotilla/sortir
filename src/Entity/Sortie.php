@@ -32,9 +32,10 @@ class Sortie
     )]
     private ?\DateTimeImmutable $dateHeureDebut = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[ORM\Column]
     #[Assert\NotBlank(message: 'Durée obligatoire')]
-    private ?\DateTime $duree = null;
+    #[Assert\Positive(message: 'La durée doit être positive')]
+    private ?int $duree = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Date limite d\'inscription obligatoire')]
@@ -74,8 +75,8 @@ class Sortie
     public function validateDateLimiteInscription(ExecutionContextInterface $context): void
     {
         if ($this->dateLimiteInscription !== null && $this->dateHeureDebut !== null) {
-            if ($this->dateLimiteInscription < $this->dateHeureDebut) {
-                $context->buildViolation('La date limite doit être supérieure ou égale à la date de début.')
+            if ($this->dateLimiteInscription > $this->dateHeureDebut) {
+                $context->buildViolation('La date limite doit être inférieure à la date de début de la sortie.')
                     ->atPath('dateLimiteInscription')
                     ->addViolation();
             }
@@ -124,17 +125,16 @@ class Sortie
         return $this;
     }
 
-    public function getDuree(): ?\DateTime
+    public function getDuree(): ?int
     {
         return $this->duree;
     }
 
-    public function setDuree(\DateTime $duree): static
+    public function setDuree(?int $duree): void
     {
         $this->duree = $duree;
-
-        return $this;
     }
+
 
     public function getDateLimiteInscription(): ?\DateTimeImmutable
     {

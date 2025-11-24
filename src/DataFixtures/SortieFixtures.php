@@ -28,11 +28,11 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDateLimiteInscription(\DateTimeImmutable::createFromMutable($date2));
 
             $sortie->setEtat($faker->randomElement($arrayEtat));
-            $min = 1;
-            $max = 48;
-            $h = $faker->numberBetween($min, $max);
+
+            $maxH = 168;
+            $h = $faker->numberBetween(1, $maxH);
             $min = $faker->numberBetween(0, 59);
-            $duree = \DateTime::createFromFormat('H:i:s', sprintf('%02d:%02d:%02d', $h, $min, 00));
+            $duree = $h*60+$min;
             $sortie->setDuree($duree);
 
             $nbIns = $faker->numberBetween(10, 50);
@@ -50,14 +50,8 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
                 $participant = $this->getReference('participant_'.$indices[$j], Utilisateur::class);
                 $sortie->addParticipant($participant);
             }
-
-
             $manager->persist($sortie);
-
-
         }
-
-
         $manager->flush();
     }
 

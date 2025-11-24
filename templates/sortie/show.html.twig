@@ -15,8 +15,10 @@
                     </p>
                     <p><strong>Nombre de places :</strong> {{ sortie.nbInscriptionMax }}</p>
                     <p><strong>Durée :</strong>
-                        {% if sortie.duree %}
-                            {{ sortie.duree.format('H:i') }} heures
+                        {% if sortie.duree is not null %}
+                            {% set heures = (sortie.duree // 60) %}
+                            {% set minutes = (sortie.duree % 60) %}
+                            {{ heures }}h {{ minutes|format('%02d') }}min
                         {% endif %}
                     </p>
                 </div>

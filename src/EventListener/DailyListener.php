@@ -59,11 +59,12 @@ class DailyListener
             if ($now > $sortie->getDateHeureDebut() && $sortie->getEtat()->getLibelle() === 'Clôturée') {
                 $sortie->setEtat($etatsByLibelle['En cours']);
             }
-            $fin = (clone $sortie->getDateHeureDebut())->modify('+1 day');
-            if ($now > $fin && $sortie->getEtat()->getLibelle() === 'En cours') {
+            $fin = (clone $sortie->getDateHeureDebut())->modify('+'.$sortie->getDuree().' minutes');
+            $lendemain = (clone $fin)->modify('+1 day');
+            if ($now > $lendemain && $sortie->getEtat()->getLibelle() === 'En cours') {
                 $sortie->setEtat($etatsByLibelle['Terminée']);
             }
-            $archive = (clone $sortie->getDateHeureDebut())->modify('+31 day');
+            $archive = (clone $fin)->modify('+31 day');
             if ($now > $archive && in_array($sortie->getEtat()->getLibelle(), ['Terminée', 'Annulée'])) {
                 $sortie->setEtat($etatsByLibelle['Historisée']);
             }

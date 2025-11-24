@@ -6,6 +6,7 @@
 
         {% include 'sortie/_formSortie.html.twig' with {'sortie': sortie, 'campus': campus} %}
 
+        <div class="btn-group" role="group">
             <div class="col-md-3 mb-2">
                 <form method="post"
                       action="{{ path('sortie_delete', { id: sortie.id }) }}"
