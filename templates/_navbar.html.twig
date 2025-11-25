@@ -1,0 +1,22 @@
+<nav class="navbar bg-body-tertiary">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+
+        <a href="{{ path('main_home') }}" class="navbar-brand d-flex align-items-center">
+            <img src="{{ asset('img/minilogo.jpg') }}" alt="Logo" style="height:40px;" class="me-2">
+            <span class="h5 m-0">Sortir.com</span>
+        </a>
+
+        <div class="d-flex align-items-center ms-auto">
+            {% if app.user %}
+                {% if is_granted("ROLE_ADMIN") %}
+                    {# <a class="nav-link" href="{{ path('admin_dashboard') }}">Administration</a> #}
+                {% endif %}
+                <a class="nav-link p-2" href="{{ path('main_home') }}">Accueil</a>
+                <a class="nav-link p-2" href="{{ path('user_profile') }}">Mon profil</a>
+                <a class="nav-link p-2" href="{{ path('app_logout') }}">Se déconnecter</a>
+            {% endif %}
+        </div>
+
+    </div>
+</nav>
+

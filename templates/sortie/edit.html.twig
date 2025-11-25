@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h2>Modifier une sortie</h2>
+
+        {% include 'sortie/_formSortie.html.twig' with {'sortie': sortie, 'campus': campus} %}
+
+        <div class="btn-group" role="group">
+            <div class="col-md-3 mb-2">
+                <form method="post"
+                      action="{{ path('sortie_delete', { id: sortie.id }) }}"
+                      onsubmit="return confirm('Supprimer cette sortie ?');">
+
+                    <button class="btn btn-danger w-100" type="submit">Supprimer</button>
+                </form>
+            </div>
+    </div>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('js/sortieForm.js') }}"></script>
+
+{% endblock %}
+
+{% block title %}
+Modifier une sortie
+{% endblock %}
+

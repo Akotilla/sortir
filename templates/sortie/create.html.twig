@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une sortie{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h2>Créer une sortie</h2>
+        {% include 'sortie/_formSortie.html.twig' %}
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('js/sortieForm.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <h3 class="mb-4">Filtrer les sorties</h3>
+
+    {{ form_start(sortieForm, {attr: {class: 'mb-4'}}) }}
+    {{ form_errors(sortieForm) }}
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div class="card p-4 shadow-sm h-100">
+
+                <div class="mb-3">
+                    {{ form_label(sortieForm.siteOrganisateur, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                    {{ form_widget(sortieForm.siteOrganisateur, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(sortieForm.siteOrganisateur) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(sortieForm.nom, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                    {{ form_widget(sortieForm.nom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(sortieForm.nom) }}
+                </div>
+
+                <div class="row">
+                    <div class="col mb-3">
+                        {{ form_label(sortieForm.dateHeureDebut, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                        {{ form_widget(sortieForm.dateHeureDebut, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(sortieForm.dateHeureDebut) }}
+                    </div>
+
+                    <div class="col mb-3">
+                        {{ form_label(sortieForm.dateLimiteInscription, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                        {{ form_widget(sortieForm.dateLimiteInscription, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(sortieForm.dateLimiteInscription) }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-md-6 d-flex flex-column">
+
+            <div class="card p-4 shadow-sm flex-grow-1 d-flex flex-column justify-content-center">
+
+                <div class="form-check mb-4">
+                    {{ form_widget(sortieForm.organisePar, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(sortieForm.organisePar, null, {'label_attr': {'class': 'form-check-label fw-semibold'}}) }}
+                </div>
+
+                <div class="form-check mb-4">
+                    {{ form_widget(sortieForm.participe, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(sortieForm.participe, null, {'label_attr': {'class': 'form-check-label fw-semibold'}}) }}
+                </div>
+
+                <div class="form-check mb-4">
+                    {{ form_widget(sortieForm.participePas, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(sortieForm.participePas, null, {'label_attr': {'class': 'form-check-label fw-semibold'}}) }}
+                </div>
+
+                <div class="form-check mb-4">
+                    {{ form_widget(sortieForm.termine, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(sortieForm.termine, null, {'label_attr': {'class': 'form-check-label fw-semibold'}}) }}
+                </div>
+
+            </div>
+
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary px-4">Rechercher</button>
+            </div>
+        </div>
+
+    </div>
+
+
+    {{ form_end(sortieForm) }}
+
+
+    <hr class="my-4">
+
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-light">
+        <tr>
+            <th>Nom de la sortie</th>
+            <th>Date de la sortie</th>
+            <th>Clôture</th>
+            <th>Inscrits/Places</th>
+            <th>État</th>
+            <th>Inscrit</th>
+            <th>Organisateur</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for sortie in sorties %}
+            <tr>
+                <td>{{ sortie.nom }}</td>
+                <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                <td>{{ sortie.dateLimiteInscription|date('d/m/Y H:i') }}</td>
+                <td>{{ sortie.participants|length }}/{{ sortie.nbInscriptionMax }}</td>
+                <td>{{ sortie.etat.libelle }}</td>
+
+                <td>
+                    {% if app.user in sortie.participants.toArray %}
+                        Oui
+                    {% else %}
+                        Non
+                    {% endif %}
+                </td>
+
+                <td>
+                    <a href="{{ path('user_show', {'id': sortie.organisePar.id}) }}"
+                       class="btn btn-outline-primary w-100">
+                        {{ sortie.organisePar.pseudo }}
+                    </a>
+                </td>
+
+                <td>
+                    <!-- Boutons futurs  -->
+                    <div class="btn-group " role="group">
+                        <a href="{{ path('sortie_show', {'id': sortie.id}) }}" class="btn btn-outline-secondary">
+                            Afficher
+                        </a>
+                        {% if sortie.etat.libelle is same as("Ouverte") %}
+                            {% if app.user in sortie.participants.toArray %}
+                                <a href="{{ path('sortie_unsub', {'id': sortie.id}) }}" class="btn btn-outline-primary">
+                                    Se désinscrire
+                                </a>
+                            {% else %}
+                                <a href="{{ path('sortie_sub', {'id': sortie.id}) }}" class="btn btn-outline-primary">
+                                    S'inscrire
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="btn-group btn-group-toggle" role="group">
+
+                        {% if app.user is same as(sortie.organisePar) %}
+                            <form method="post"
+                                    {% if sortie.etat.libelle is same as("En création") %}
+                                  action="{{ path('sortie_publish', { id: sortie.id }) }}"
+                                  onsubmit="return confirm('Attention vous allez modifier l\'état de cette sortie !');">
+                                <div class="btn-group btn-group-toggle" role="group">
+
+                                    <a href="{{ path('sortie_edit', {'id': sortie.id}) }}"
+                                       class="btn btn-outline-primary">
+                                        Modifier
+                                    </a>
+                                    <button class="btn btn-outline-success" id="publish" type="submit">Publier</button>
+                                </div>
+
+                                {% elseif sortie.etat.libelle is same as("Ouverte") %}
+
+                                    action="{{ path('sortie_cancel', { id: sortie.id }) }}"
+                                    onsubmit="return confirm('Annuler cette sortie ?');">
+                                    <button class="btn btn-outline-danger" id="cancel" type="submit">Annuler</button>
+
+                                {% else %}
+                                    >
+                                {% endif %}
+
+                            </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8" class="text-center text-muted">
+                    Aucune sortie trouvée
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+    <a href="{{ path('sortie_create') }}"
+       class="btn btn-outline-success w-100">
+        Créer une sortie
+    </a>
+
+{% endblock %}
