@@ -46,7 +46,7 @@ final class MainController extends AbstractController
         ]);
     }
 
-    #[Route('/test-cache')]
+    #[Route('/test-cache', name: "test", methods: ['GET'])]
     public function testCache(CacheInterface $cache)
     {
         $lastRun = $cache->get('daily', fn() => 'Jamais');

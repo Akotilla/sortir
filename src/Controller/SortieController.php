@@ -38,7 +38,8 @@ final class SortieController extends AbstractController
         }
 
         $sortie = new Sortie();
-        $form = $this->createForm(CreatesortieType::class, $sortie);
+        $form = $this->createForm(CreatesortieType::class, $sortie, [
+            'is_edit' => false]);
         $form->handleRequest($request);
 
 
@@ -98,9 +99,10 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
         }
         if ($sortie->getEtat()->getLibelle() === 'En création') {
-
-
-            $form = $this->createForm(CreatesortieType::class, $sortie);
+            $route = $request->attributes->get('_route');
+            $form = $this->createForm(CreatesortieType::class, $sortie, [
+                'is_edit' => $route === 'sortie_edit',
+            ]);
             $form->handleRequest($request);
 
 

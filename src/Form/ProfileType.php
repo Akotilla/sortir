@@ -7,11 +7,14 @@ use App\Entity\Sortie;
 use App\Entity\Utilisateur;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 
 class ProfileType extends AbstractType
 {
@@ -40,16 +43,35 @@ class ProfileType extends AbstractType
                 'choice_label' => 'nom',
                 'disabled'=> true,
             ])
+            ->add('image', FileType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Ma photo',
+                'constraints' => [
+                    new Image([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Merci de choisir une image valide',
 
-            //->add('administrator')
-            //->add('actif')
-            //->add('roles')
-//            ->add('participant', EntityType::class, [
-//                'class' => Sortie::class,
-//                'choice_label' => 'id',
-//                'multiple' => true,
-//            ])
-        ;
+                    ])
+                ]
+            ]);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $wish = $event->getData();
+            if ($wish && $wish->getFilename()) {
+                // cas où on est en modification et qu'une image est déjà présente,
+                // on ajoute un checkbox pour permettre de demander
+                // la suppression de l'image
+                $form = $event->getForm();
+                $form->add('deleteImage', CheckboxType::class, [
+                    'required' => false,
+                    'mapped' => false,
+                ]);
+            }
+        });
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $password = $form->get('password')->getData();

@@ -10,9 +10,7 @@
         <link rel="icon" href="{{ asset('img/favicon.jpg') }}">
     {% endblock %}
 
-    {% block javascripts %}
-        {% block importmap %}{{ importmap('app') }}{% endblock %}
-    {% endblock %}
+
 </head>
 
 <body class="">
@@ -36,4 +34,7 @@
 </main>
 
 </body>
+{% block javascripts %}
+    {% block importmap %}{{ importmap('app') }}{% endblock %}
+{% endblock %}
 </html>

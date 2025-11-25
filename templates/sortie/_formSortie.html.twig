@@ -92,7 +92,7 @@
     {{ form_errors(sortieForm.infosSortie) }}
 </div>
 
-<div class="mt-4 row text-center btn-group" role="group">
+<div class="mt-4 row text-center" role="group">
 
     <div class="col-md-3 mb-2">
         {{ form_row(sortieForm.save, {'attr': {'class': 'btn btn-primary w-100'}}) }}
@@ -109,6 +109,11 @@
             Retour
         </a>
     </div>
+    {% if sortieForm.delete is defined %}
+        <div class="col-md-3 mb-2">
+            {{ form_row(sortieForm.delete, {'attr': {'class': 'btn btn-danger w-100'}}) }}
+        </div>
+    {% endif %}
 </div>
 
 
