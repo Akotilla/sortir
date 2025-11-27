@@ -17,10 +17,18 @@ class PublicType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
-            ->add('prenom')
-            ->add('telephone')
-            ->add('email')
+            ->add('nom', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('prenom', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('telephone', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('email', null, [
+                'attr' => ['readonly' => true],
+            ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom',

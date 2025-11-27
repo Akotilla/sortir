@@ -18,11 +18,8 @@ class CampusAdminType extends AbstractType
                 'label' => 'Nom du campus',
                 'required' => true,
                 'attr' => ['class' => 'form-control'],
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Créer',
-                'attr' => ['class' => 'btn btn-success mt-2'],
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -45,11 +45,12 @@ class UtilisateurType extends AbstractType
             ->add('roles', ChoiceType::class, [
                 'label' => 'Rôles',
                 'choices' => [
-                    'Utilisateur' => 'ROLE_USER',
-                    'Administrateur' => 'ROLE_ADMIN',
+                    'Rôle Utilisateur' => 'ROLE_USER',
+                    'Rôle Administrateur' => 'ROLE_ADMIN',
                 ],
                 'multiple' => true,
                 'expanded' => true,
+
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe',
@@ -57,11 +58,11 @@ class UtilisateurType extends AbstractType
                 'mapped' => false, // On gère séparément le hash
             ])
             ->add('administrator', CheckboxType::class, [
-                'label' => 'Administrateur',
+                'label' => 'Compte Administrateur',
                 'required' => false
             ])
             ->add('actif', CheckboxType::class, [
-                'label' => 'Actif',
+                'label' => 'Compte Actif',
                 'required' => false
             ])
             ->add('campus', EntityType::class, [

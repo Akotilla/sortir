@@ -11,9 +11,64 @@
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
-    <div class="row">
-        {{ form_widget(form) }}
-    </div>
+    {% if entityName == 'Utilisateur' %}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.nom) }}
+                {{ form_row(form.prenom) }}
+                {{ form_row(form.pseudo) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.telephone) }}
+            </div>
+            <div class="col-md-6">
+                <h5 class="mb-3">Paramètres utilisateur</h5>
+
+                <div class="mb-3">
+                    <label class="form-label">Rôles</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for choice in form.roles %}
+                            <div class="form-check">
+                                {{ form_widget(choice, {'attr': {'class': 'form-check-input'}}) }}
+                                {{ form_label(choice, null, {'attr': {'class': 'form-check-label'}}) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.roles) }}
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        {{ form_widget(form.administrator, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(form.administrator, null, {'attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.administrator) }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        {{ form_widget(form.actif, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(form.actif, null, {'attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.actif) }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {{ form_row(form.password) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_row(form.campus) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_row(form.filename) }}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            {{ form_widget(form) }}
+        </div>
+    {% endif %}
     <button class="btn btn-primary mt-3" type="submit">
         {% if create is defined and create %}Créer{% else %}Mettre à jour{% endif %}
     </button>
