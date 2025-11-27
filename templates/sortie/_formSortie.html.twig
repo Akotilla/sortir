@@ -58,10 +58,27 @@
                 <input type="text" class="form-control" value="{{ campus.nom }}" readonly disabled>
             </div>
 
+            {% set selectedLieu = sortieForm.lieu.vars.value %}
+            {% set selectedVilleId = (selectedLieu is not null and selectedLieu is not same as('') and selectedLieu.ville is defined) ? selectedLieu.ville.id : null %}
+
+            <div class="mb-3">
+                <label for="ville" class="form-label">Ville</label>
+                <select name="ville" id="ville" class="form-control">
+                    <option value="" disabled {% if selectedVilleId is null %}selected{% endif %}>
+                        --Veuillez sélectionner une ville--
+                    </option>
+                    {% for ville in villes %}
+                        <option value="{{ ville.id }}"
+                                {% if selectedVilleId is not null and selectedVilleId == ville.id %}selected{% endif %}>
+                            {{ ville.nom }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="mb-3">
                 {{ form_label(sortieForm.lieu, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(sortieForm.lieu, {'attr': {
-                    'class': 'form-select'}}) }}
+                {{ form_widget(sortieForm.lieu, {'attr': {'class': 'form-select'}}) }}
                 {{ form_errors(sortieForm.lieu) }}
             </div>
 

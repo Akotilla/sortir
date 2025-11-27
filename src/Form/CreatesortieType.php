@@ -77,8 +77,10 @@ class CreatesortieType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'label' => 'Lieu',
-                'placeholder' => 'Veuillez sélectionner un lieu',
                 'attr' => ['class' => 'form-control'],
+                'choice_attr' => function(Lieu $lieu, $key, $value) {
+                    return ['data-ville' => $lieu->getVille()->getId()];
+                },
                 'required' => true,
             ])
             ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
