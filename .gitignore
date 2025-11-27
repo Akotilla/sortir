@@ -19,5 +19,8 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
-###> config ###
+###> config <###
 /.idea/
+
+###> photo profie <###
+/public/uploads/
