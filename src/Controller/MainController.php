@@ -41,18 +41,8 @@ final class MainController extends AbstractController
             $sorties = $sortieRepository->findByCampusWithRelations($user->getCampus()->getId(), $user->getId());
         }
         return $this->render('main/sortie.html.twig', [
-            'sortieForm' => $sortieForm->createView(),
+            'sortieForm' => $sortieForm,
             'sorties' => $sorties,
-        ]);
-    }
-
-    #[Route('/test-cache', name: "test", methods: ['GET'])]
-    public function testCache(CacheInterface $cache)
-    {
-        $lastRun = $cache->get('daily', fn() => 'Jamais');
-
-        return $this->json([
-            'daily_cache' => $lastRun
         ]);
     }
 

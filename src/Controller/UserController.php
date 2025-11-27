@@ -21,7 +21,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 final class UserController extends AbstractController
 {
 
-    #[Route('/orga/{id}', name: 'user_show', methods: ['GET'])]
+    #[Route('/orga/{id}', name: 'user_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(
         Utilisateur $userOrga,
         Request     $request,

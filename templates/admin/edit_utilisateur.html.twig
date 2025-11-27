@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if create is defined and create %}Créer{% else %}Modifier{% endif %} {{ entityName }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">
+        {% if create is defined and create %}Créer{% else %}Modifier{% endif %} {{ entityName }}
+    </h1>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    <div class="row">
+        {{ form_widget(form) }}
+    </div>
+    <button class="btn btn-primary mt-3" type="submit">
+        {% if create is defined and create %}Créer{% else %}Mettre à jour{% endif %}
+    </button>
+    {{ form_end(form) }}
+{% endblock %}

@@ -9,11 +9,24 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Ville>
  */
-class VilleRepository extends ServiceEntityRepository
+class VilleRepository extends ServiceEntityRepository implements FiltreInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Ville::class);
+    }
+
+    public function filtre(array $value):mixed {
+
+        $qb = $this->createQueryBuilder('v');
+
+        if (!empty($value['nomVille'])) {
+            $qb->where('v.nom LIKE :nom')
+                ->setParameter('nom', '%' . $value['nomVille'] . '%');
+        }
+
+        return $qb->getQuery()->getResult();
+
     }
 
     //    /**

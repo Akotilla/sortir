@@ -52,7 +52,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(groups: ['create'])]
     #[Assert\Length(max: 4096)]
     private ?string $password = null;
 
