@@ -59,6 +59,32 @@ class CreatesortieType extends AbstractType
                     'type' => 'number',],
                 'mapped' => false,
             ])
+            ->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+                /** @var Sortie|null $sortie */
+                $sortie = $event->getData();
+                $form = $event->getForm();
+
+                if (!$sortie || $sortie->getId() === null) {
+                    return;
+                }
+
+                $duree = $sortie->getDuree(); // en minutes
+                if ($duree === null) {
+                    return;
+                }
+
+                // calcul heures / minutes
+                $heures = intdiv((int)$duree, 60);
+                $minutes = (int)$duree % 60;
+
+                // setter sur les champs non mappés
+                if ($form->has('dureeHeures')) {
+                    $form->get('dureeHeures')->setData($heures);
+                }
+                if ($form->has('dureeMinutes')) {
+                    $form->get('dureeMinutes')->setData($minutes);
+                }
+            })
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
                 /** @var Sortie $sortie */
                 $sortie = $event->getData();

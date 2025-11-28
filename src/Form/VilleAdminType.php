@@ -14,11 +14,8 @@ class VilleAdminType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class)
-            ->add('codePostal', TextType::class)
-            ->add('save', SubmitType::class, [
-                'label' => 'Créer',
-                'attr' => ['class' => 'btn btn-success mt-2'],
-            ]);
+            ->add('codePostal', TextType::class);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

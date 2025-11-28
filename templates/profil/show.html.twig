@@ -17,7 +17,7 @@
                     <div class="card-body">
 
                         {% if userOrga.filename %}
-                            <img src="{{ asset(user_images_public_path ~ '/' ~ userOrga.filename) }}"
+                            <img src="{{ asset('uploads/users/' ~ userOrga.filename) }}"
                                  class="card-img-top img-fluid"
                                  alt="Image de {{ userOrga.pseudo }}"
                                  style="max-width: 150px; height: auto;">

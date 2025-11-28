@@ -9,34 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const allOptions = Array.from(lieuSelect.querySelectorAll('option'));
 
-    villeSelect.addEventListener('change', function() {
-        const selectedVille = this.value;
-
-        lieuSelect.innerHTML = '<option value="" disabled selected>--Veuillez sélectionner un lieu--</option>';
-
-        allOptions.forEach(option => {
-            if (!option.value || option.dataset.ville === selectedVille) {
-               const clone = option.cloneNode(true);
-                lieuSelect.appendChild(clone);
-            }
-        });
-
-    });
-
-    // (édition)
-    if (lieuSelect.value) {
-        const selectedOption = lieuSelect.selectedOptions[0];
-        if (selectedOption && selectedOption.dataset.ville) {
-            villeSelect.value = selectedOption.dataset.ville;
-            villeSelect.dispatchEvent(new Event('change'));
-            lieuSelect.value = selectedOption.value;
-        }
-    }
-
-
-    lieuSelect.addEventListener('change', function () {
-        const lieuId = this.value;
-
+    function updateLieuFields(lieuId) {
         if (!lieuId) {
             inputRue.value = "";
             inputCp.value = "";
@@ -54,6 +27,42 @@ document.addEventListener('DOMContentLoaded', function () {
                     : "";
             })
             .catch(err => console.error("Erreur API lieu :", err));
+    }
+
+    villeSelect.addEventListener('change', function () {
+        const selectedVille = this.value;
+
+        lieuSelect.innerHTML = '<option value="" disabled selected>--Veuillez sélectionner un lieu--</option>';
+
+        allOptions.forEach(option => {
+            if (!option.value || option.dataset.ville === selectedVille) {
+                const clone = option.cloneNode(true);
+                lieuSelect.appendChild(clone);
+            }
+        });
+
+    });
+
+    // (édition)
+    if (lieuSelect.value) {
+        const selectedOption = lieuSelect.selectedOptions[0];
+        if (selectedOption && selectedOption.dataset.ville) {
+            villeSelect.value = selectedOption.dataset.ville;
+            villeSelect.dispatchEvent(new Event('change'));
+
+            setTimeout(() => {
+
+                lieuSelect.value = selectedOption.value;
+                lieuSelect.dispatchEvent(new Event('change'));
+                updateLieuFields(lieuSelect.value);
+
+            }, 0);
+        }
+    }
+
+
+    lieuSelect.addEventListener('change', function () {
+        updateLieuFields(this.value);
     });
 
 });
