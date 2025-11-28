@@ -223,9 +223,12 @@ final class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($plainPassword = $form->get('password')->getData()) {
-                $entity->setPassword($this->hasher->hashPassword($entity, $plainPassword)); // hash pswd
+            if ($entity instanceof Utilisateur) {
+                if ($plainPassword = $form->get('password')->getData()) {
+                    $entity->setPassword($this->hasher->hashPassword($entity, $plainPassword)); // hash pswd
+                }
             }
+
             $this->em->flush();
             $this->addFlash('success', 'Modification effectuée avec succès.');
             return null;
