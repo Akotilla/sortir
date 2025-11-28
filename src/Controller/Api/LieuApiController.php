@@ -18,7 +18,7 @@ class LieuApiController extends AbstractController
         $lieu = $lieuRepo->find($id);
 
         if (!$lieu) {
-            return new JsonResponse(['error' => 'Lieu introuvable'], 416);
+            return new JsonResponse(['error' => 'Lieu introuvable'], 404);
         }
 
         return new JsonResponse([

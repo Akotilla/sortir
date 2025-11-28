@@ -8,7 +8,9 @@ use App\Entity\Utilisateur;
 use App\Form\CreatesortieType;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
+use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
+use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +27,9 @@ final class SortieController extends AbstractController
     public function create(
         Request                $request,
         EntityManagerInterface $em,
-        EtatRepository         $etatRepo
+        EtatRepository         $etatRepo,
+        LieuRepository         $lieuRepo,
+        VilleRepository        $villeRepo,
     ): Response
     {
 
@@ -37,8 +41,11 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Vous n\'avez pas les droits nécessaires pour accéder à cette page.');
         }
 
+        $villes = $villeRepo->findAll();
+        $lieux = $lieuRepo->findAll();
         $sortie = new Sortie();
-        $form = $this->createForm(CreatesortieType::class, $sortie);
+        $form = $this->createForm(CreatesortieType::class, $sortie, [
+            'is_edit' => false]);
         $form->handleRequest($request);
 
 
@@ -79,6 +86,8 @@ final class SortieController extends AbstractController
         return $this->render('sortie/create.html.twig', [
             'sortieForm' => $form,
             'campus' => $user->getCampus(),
+            'villes' => $villes,
+            'lieux' => $lieux,
         ]);
     }
 
@@ -88,6 +97,7 @@ final class SortieController extends AbstractController
         Request                $request,
         EntityManagerInterface $em,
         EtatRepository         $etatRepo,
+        VilleRepository        $villeRepo,
     ): Response
     {
         $user = $this->getUser();
@@ -98,9 +108,11 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Vous n’avez pas les droits pour modifier cette sortie.');
         }
         if ($sortie->getEtat()->getLibelle() === 'En création') {
-
-
-            $form = $this->createForm(CreatesortieType::class, $sortie);
+            $villes = $villeRepo->findAll();
+            $route = $request->attributes->get('_route');
+            $form = $this->createForm(CreatesortieType::class, $sortie, [
+                'is_edit' => $route === 'sortie_edit',
+            ]);
             $form->handleRequest($request);
 
 
@@ -128,6 +140,7 @@ final class SortieController extends AbstractController
                 'sortieForm' => $form,
                 'sortie' => $sortie,
                 'campus' => $sortie->getSiteOrganisateur(),
+                'villes' => $villes,
 
             ]);
         }

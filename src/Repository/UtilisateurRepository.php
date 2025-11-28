@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 /**
  * @extends ServiceEntityRepository<Utilisateur>
  */
-class UtilisateurRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UtilisateurRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, FiltreInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -31,6 +31,19 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    public function filtre(array $value):mixed {
+
+        $qb = $this->createQueryBuilder('u');
+
+        if (!empty($value['nomUtilisateur'])) {
+            $qb->where('u.nom LIKE :nom OR u.prenom LIKE :nom OR u.pseudo LIKE :nom')
+                ->setParameter('nom', '%' . $value['nomUtilisateur'] . '%');
+        }
+
+        return $qb->getQuery()->getResult();
+
     }
 
 

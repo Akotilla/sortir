@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['pseudo'], message: 'Ce pseudo est déjà utilisé')]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -36,7 +37,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $telephone = null;
 
     #[ORM\Column(length: 180)]
-    #[Assert\Unique()]
     #[Assert\NotBlank(message:'Email obligatoire')]
     #[Assert\Email(message:'Email non valide')]
     #[Assert\Length(max: 180, maxMessage: 'Maximum {{ limit }} characters please!')]
@@ -52,7 +52,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(groups: ['create'])]
     #[Assert\Length(max: 4096)]
     private ?string $password = null;
 
@@ -77,9 +77,21 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
     private Collection $participant;
 
-    #[Assert\Unique()]
     #[ORM\Column(length: 180)]
     private ?string $pseudo = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filename = null;
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(?string $filename): void
+    {
+        $this->filename = $filename;
+    }
 
     public function __construct()
     {

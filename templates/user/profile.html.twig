@@ -14,6 +14,13 @@
                         <h4 class="mb-0">Mon Profil</h4>
                     </div>
 
+                    {% if user.filename %}
+                        <img src="{{ asset('uploads/users/' ~ user.filename) }}"
+                             class="card-img-top img-fluid"
+                             alt="Image de {{ user.pseudo }}"
+                             style="max-width: 150px; height: auto;">
+                    {% endif %}
+
                     <div class="card-body">
 
                         {{ form_start(profileForm) }}
@@ -49,6 +56,23 @@
                         <div class="mb-3">
                             {{ form_row(profileForm.password_confirm, {'attr': {'class': 'form-control'}}) }}
                         </div>
+
+                        <div class="mb-3">
+                            {{ form_row(profileForm.image, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {% if profileForm.deleteImage is defined %}
+                        <div class="form-check mb-3">
+                            {{ form_widget(profileForm.deleteImage, {
+                                attr: {
+                                    class: 'form-check-input',
+                                    id: 'deleteImageCheckbox'
+                                }
+                            }) }}
+                            <label class="form-check-label" for="deleteImageCheckbox">
+                                Supprimer l'image actuelle
+                            </label>
+                        </div>
+                        {% endif %}
 
                         <button class="btn btn-primary w-100 mt-3">Enregistrer</button>
 

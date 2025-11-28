@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page d'administration{% endblock %}
+
+{% block body %}
+
+    <h1 class="text-center mb-5">Page d'administration</h1>
+    <div class="d-flex justify-content-between">
+        <a href="{{ path('admin_campus') }}" class="btn btn-primary flex-fill mx-1">Gérer les campus</a>
+        <a href="{{ path('admin_villes') }}" class="btn btn-secondary flex-fill mx-1">Gérer les villes</a>
+        <a href="{{ path('admin_utilisateurs') }}" class="btn btn-success flex-fill mx-1">Gérer les utilisateurs</a>
+    </div>
+
+
+
+{% endblock %}

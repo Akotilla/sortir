@@ -6,16 +6,17 @@
             <span class="h5 m-0">Sortir.com</span>
         </a>
 
-        <div class="d-flex align-items-center ms-auto">
+        <div class="btn-group" role="group">
             {% if app.user %}
                 {% if is_granted("ROLE_ADMIN") %}
-                    {# <a class="nav-link" href="{{ path('admin_dashboard') }}">Administration</a> #}
+                    <a class="btn btn-outline-dark" href="{{ path('admin_control') }}">Administration</a>
                 {% endif %}
-                <a class="nav-link p-2" href="{{ path('main_home') }}">Accueil</a>
-                <a class="nav-link p-2" href="{{ path('user_profile') }}">Mon profil</a>
-                <a class="nav-link p-2" href="{{ path('app_logout') }}">Se déconnecter</a>
+                <a class="btn btn-outline-dark" href="{{ path('main_home') }}">Accueil</a>
+                <a class="btn btn-outline-dark" href="{{ path('user_profile') }}">Mon profil</a>
+                <a class="btn btn-outline-dark" href="{{ path('app_logout') }}">Se déconnecter</a>
             {% endif %}
         </div>
+
 
     </div>
 </nav>

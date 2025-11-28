@@ -20,9 +20,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CreatesortieType extends AbstractType
 {
+    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -46,7 +49,7 @@ class CreatesortieType extends AbstractType
             ])
             ->add('dureeHeures', IntegerType::class, [
                 'label' => 'Heures',
-                'attr' => ['min' => 0,'type' => 'number',],
+                'attr' => ['min' => 0, 'type' => 'number',],
                 'mapped' => false,
             ])
             ->add('dureeMinutes', IntegerType::class, [
@@ -74,12 +77,24 @@ class CreatesortieType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'label' => 'Lieu',
-                'placeholder' => 'Veuillez sélectionner un lieu',
                 'attr' => ['class' => 'form-control'],
+                'choice_attr' => function(Lieu $lieu, $key, $value) {
+                    return ['data-ville' => $lieu->getVille()->getId()];
+                },
                 'required' => true,
             ])
             ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
             ->add('publish', SubmitType::class, ['label' => 'Publier']);
+        if ($options['is_edit'] ?? false) {
+            $builder->add('delete', SubmitType::class, [
+                'label' => 'Supprimer',
+                'attr' => ['class' => 'btn btn-danger w-100 mt-2',
+                    'formaction' => $this->urlGenerator->generate('sortie_delete', [
+                        'id' => $builder->getData()->getId(),
+                    ]),
+                    'formmethod' => 'post',],
+            ]);
+        }
 
 
     }
@@ -88,6 +103,7 @@ class CreatesortieType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Sortie::class,
+            'is_edit' => false,
         ]);
     }
 }

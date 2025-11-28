@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - {{ type|capitalize }}{% endblock %}
+
+{% block body %}
+    <div class="filter-block">
+        {{ form_start(filterForm) }}
+        <div class="filter-fields">
+            {% if filterForm.nomUtilisateur is defined %}
+                {{ form_row(filterForm.nomUtilisateur, {'label': 'Utilisateur'}) }}
+            {% elseif filterForm.nomVille is defined %}
+                {{ form_row(filterForm.nomVille, {'label': 'Ville'}) }}
+            {% elseif filterForm.nomCampus is defined %}
+                {{ form_row(filterForm.nomCampus, {'label': 'Campus'}) }}
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+        {{ form_end(filterForm) }}
+    </div>
+    <hr>
+
+    <table class="table">
+        <thead>
+        <tr>
+            {% if type == 'utilisateurs' %}
+                <th>Pseudo</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+
+            {% elseif type == 'campus' %}
+                <th>Nom du campus</th>
+
+            {% elseif type == 'villes' %}
+                <th>Nom</th>
+                <th>Code Postal</th>
+            {% endif %}
+
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for item in items %}
+            <tr>
+
+                {% if type == 'utilisateurs' %}
+                    <td>{{ item.pseudo }}</td>
+                    <td>{{ item.nom }}</td>
+                    <td>{{ item.prenom }}</td>
+                    <td>{{ item.email }}</td>
+
+                {% elseif type == 'campus' %}
+                    <td>{{ item.nom }}</td>
+
+                {% elseif type == 'villes' %}
+                    <td>{{ item.nom }}</td>
+                    <td>{{ item.codePostal }}</td>
+                {% endif %}
+
+                <td>
+                    {# EDIT #}
+                    {% if type == 'utilisateurs' %}
+                        <a href="{{ path('admin_edit_utilisateur', {id: item.id}) }}"
+                           class="btn btn-warning btn-sm">Éditer</a>
+                    {% elseif type == 'campus' %}
+                        <a href="{{ path('admin_edit_campus', {id: item.id}) }}"
+                           class="btn btn-warning btn-sm">Éditer</a>
+                    {% elseif type == 'villes' %}
+                        <a href="{{ path('admin_edit_ville', {id: item.id}) }}"
+                           class="btn btn-warning btn-sm">Éditer</a>
+                    {% endif %}
+
+                    {# DELETE BUTTON (ouvre le modal) #}
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#deleteModal{{ type }}{{ item.id }}">
+                        Supprimer
+                    </button>
+
+                    {# DELETE MODAL #}
+                    <div class="modal fade" id="deleteModal{{ type }}{{ item.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning text-dark">
+                                    <h5 class="modal-title">⚠ Confirmation de suppression</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler
+                                    </button>
+                                    {% if type == 'utilisateurs' %}
+                                        <a href="{{ path('admin_delete_utilisateur', {id: item.id}) }}"
+                                           class="btn btn-danger">Supprimer</a>
+                                    {% elseif type == 'campus' %}
+                                        <a href="{{ path('admin_delete_campus', {id: item.id}) }}"
+                                           class="btn btn-danger">Supprimer</a>
+                                    {% elseif type == 'villes' %}
+                                        <a href="{{ path('admin_delete_ville', {id: item.id}) }}"
+                                           class="btn btn-danger">Supprimer</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </td>
+            </tr>
+
+        {% else %}
+            <tr>
+                <td colspan="8"><i>Aucun résultat</i></td>
+            </tr>
+        {% endfor %}
+
+        {% if type in ['campus', 'villes'] %}
+            <tr>
+                {{ form_start(createForm) }}
+
+                <td>
+                    {{ form_widget(createForm.nom, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                    <div class="text-danger small">{{ form_errors(createForm.nom) }}</div>
+                </td>
+
+                {% if type == 'villes' %}
+                    <td>
+                        {{ form_widget(createForm.codePostal, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                        <div class="text-danger small">{{ form_errors(createForm.codePostal) }}</div>
+                    </td>
+                {% endif %}
+
+                <td>
+                    <button type="submit" class="btn btn-success btn-sm px-3 d-flex align-items-center gap-1 mx-auto">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <span>Créer</span>
+                    </button>
+                </td>
+
+                {{ form_end(createForm) }}
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+    {% if type == 'utilisateurs' %}
+        <div>
+            <a href="{{ path('admin_create_utilisateur') }}" class="btn btn-success btn-sm w-100">Créer</a>
+        </div>
+    {% endif %}
+
+{% endblock %}
