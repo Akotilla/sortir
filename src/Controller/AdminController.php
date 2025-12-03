@@ -27,12 +27,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin')]
 final class AdminController extends AbstractController
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em, UserPasswordHasherInterface $hasher)
+    public function __construct(private readonly EntityManagerInterface $em, private readonly UserPasswordHasherInterface $hasher)
     {
-        $this->em = $em;
-        $this->hasher = $hasher;
     }
 
     private function checkAdmin(): void
@@ -48,7 +44,7 @@ final class AdminController extends AbstractController
         string         $filterType,
         array          $filterOptions,
         string         $createType,
-                       $entityClass,
+        mixed          $entityClass,
 
     ): void
     {
@@ -185,7 +181,7 @@ final class AdminController extends AbstractController
 
 
     #[Route('/villes', name: 'admin_villes', methods: ['GET', 'POST'])]
-    public function villes(Request $request, VilleRepository $villeRepo)
+    public function villes(Request $request, VilleRepository $villeRepo): Response
     {
         $this->checkAdmin();
 
@@ -217,7 +213,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    private function adminFactoEdit(Request $request, $entity, string $formType): mixed
+    private function adminFactoEdit(Request $request, mixed $entity, string $formType): mixed
     {
         $form = $this->createForm($formType, $entity);
         $form->handleRequest($request);
@@ -238,7 +234,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/utilisateur/{id}/edit', name: 'admin_edit_utilisateur', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function editUtilisateur(Request $request, Utilisateur $user)
+    public function editUtilisateur(Request $request, Utilisateur $user): Response
     {
         $this->checkAdmin();
 
@@ -257,7 +253,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/campus/{id}/edit', name: 'admin_edit_campus', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function editCampus(Request $request, Campus $campus)
+    public function editCampus(Request $request, Campus $campus): Response
     {
         $this->checkAdmin();
         $form = $this->adminFactoEdit($request, $campus, CampusType::class);
@@ -275,7 +271,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/ville/{id}/edit', name: 'admin_edit_ville', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function editVille(Request $request, Ville $ville)
+    public function editVille(Request $request, Ville $ville): Response
     {
         $this->checkAdmin();
         $form = $this->adminFactoEdit($request, $ville, VilleType::class);
@@ -292,7 +288,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    private function adminFactoDelete($entity, string $routeName)
+    private function adminFactoDelete(mixed $entity, string $routeName): mixed
     {
         $this->em->remove($entity);
         $this->em->flush();
@@ -301,21 +297,21 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/utilisateur/{id}/delete', name: 'admin_delete_utilisateur', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function deleteUtilisateur(Utilisateur $user)
+    public function deleteUtilisateur(Utilisateur $user): Response
     {
         $this->checkAdmin();
         return $this->adminFactoDelete($user, 'admin_utilisateurs');
     }
 
     #[Route('/campus/{id}/delete', name: 'admin_delete_campus', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function deleteCampus(Campus $campus)
+    public function deleteCampus(Campus $campus): Response
     {
         $this->checkAdmin();
         return $this->adminFactoDelete($campus, 'admin_campus');
     }
 
     #[Route('/ville/{id}/delete', name: 'admin_delete_ville', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function deleteVille(Ville $ville)
+    public function deleteVille(Ville $ville): Response
     {
         $this->checkAdmin();
         return $this->adminFactoDelete($ville, 'admin_villes');

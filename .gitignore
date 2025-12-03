@@ -24,3 +24,7 @@
 
 ###> photo profie <###
 /public/uploads/
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
