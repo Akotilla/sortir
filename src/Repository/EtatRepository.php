@@ -16,7 +16,7 @@ class EtatRepository extends ServiceEntityRepository
         parent::__construct($registry, Etat::class);
     }
 
-    public function findByLibelle($libelle){
+    public function findByLibelle(string $libelle): mixed{
 
         return $this->createQueryBuilder('e')
         ->andWhere('e.libelle = :libelle')

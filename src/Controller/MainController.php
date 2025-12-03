@@ -3,16 +3,13 @@
 namespace App\Controller;
 
 use App\DTO\SortieFiltre;
-use App\Entity\Sortie;
 use App\Form\SortieType;
-use App\Repository\CampusRepository;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 
 
 final class MainController extends AbstractController

@@ -30,7 +30,7 @@ class DailyListener
         $today = (new \DateTimeImmutable('today'))->format('Y-m-d');
         $lastRun = $this->cache->get(self::CACHE_KEY, fn() => null);
 
-        if ($today == $lastRun) {
+        if ($today === $lastRun) {
             return;
         }
 
@@ -40,7 +40,7 @@ class DailyListener
 
     }
 
-    private function updateSorties()
+    private function updateSorties():void
     {
         $now = (new \DateTimeImmutable('today'))->format('Y-m-d');
         $sorties = $this->sortiesRepository->findAll();
@@ -71,4 +71,5 @@ class DailyListener
         }
         $this->em->flush();
     }
+
 }
